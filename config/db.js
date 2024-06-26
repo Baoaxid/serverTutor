@@ -1,16 +1,27 @@
-const odbc = require("odbc");
-// const mssql = require("mssql");
+// const odbc = require("odbc");
+const mssql = require("mssql");
 const dotenv = require("dotenv");
 
 dotenv.config();
 
+// const dbConfig = {
+//   connectionString: `Driver={ODBC Driver 18 for SQL Server};Server=${process.env.DB_SERVER};Database=${process.env.DB_DATABASE};Uid=${process.env.DB_USER};Pwd=${process.env.DB_PASSWORD};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;`,
+// };
 const dbConfig = {
-  connectionString: `Driver={ODBC Driver 18 for SQL Server};Server=${process.env.DB_SERVER};Database=${process.env.DB_DATABASE};Uid=${process.env.DB_USER};Pwd=${process.env.DB_PASSWORD};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;`,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_DATABASE,
+  options: {
+    encrypt: true, // Use true if you're using encryption
+    trustServerCertificate: true, // Accept self-signed certificates
+    enableArithAbort: true,
+  },
 };
 
 const connectDB = async () => {
   try {
-    const connection = await odbc.connect(dbConfig);
+    const connection = await mssql.connect(dbConfig);
     console.log("Database connected successfully");
     return connection;
   } catch (error) {
