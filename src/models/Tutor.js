@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const connectDB = require("../config/db");
 const sql = require("mssql");
+const Payment = require("./Payment");
+const Subject = require("./Subject");
 
 dotenv.config();
 

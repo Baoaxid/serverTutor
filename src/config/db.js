@@ -19,9 +19,14 @@ const dbConfig = {
   },
 };
 
+let connection;
+
 const connectDB = async () => {
+  if (connection) {
+    return connection;
+  }
   try {
-    const connection = await mssql.connect(dbConfig);
+    connection = await mssql.connect(dbConfig);
     console.log("Database connected successfully");
     return connection;
   } catch (error) {

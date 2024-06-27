@@ -1,9 +1,29 @@
 const Tutor = require("../models/Tutor");
 
+const paymentList = await Payment.getAllPayment();
+const subjectList = await Subject.getAllSubject();
+
 const createClasses = async (req, res) => {
   try {
     const classroom = req.body;
-    console.log(classroom);
+    const isPaymentValid = paymentList.some(
+      (payment) => payment.paymentID === classroom.PaymentID
+    );
+    const isSubjectValid = subjectList.some(
+      (subject) => subject.subjectID === classroom.subjectID
+    );
+
+    if (!isPaymentValid) {
+      return res.status(400).json({
+        message: "Invalid PaymentID",
+      });
+    }
+
+    if (!isSubjectValid) {
+      return res.status(400).json({
+        message: "Invalid SubjectID",
+      });
+    }
     if (
       !classroom.subjectID ||
       //!classroom.studentID ||
@@ -18,6 +38,7 @@ const createClasses = async (req, res) => {
         message: "Please provide all field",
       });
     }
+
     const data = await Tutor.createClass(classroom);
     if (!data) {
       return res.status(404).json({
@@ -48,6 +69,24 @@ const updateClasses = async (req, res) => {
       });
     }
     const classroom = req.body;
+    const isPaymentValid = paymentList.some(
+      (payment) => payment.paymentID === classroom.PaymentID
+    );
+    const isSubjectValid = subjectList.some(
+      (subject) => subject.subjectID === classroom.subjectID
+    );
+
+    if (!isPaymentValid) {
+      return res.status(400).json({
+        message: "Invalid PaymentID",
+      });
+    }
+
+    if (!isSubjectValid) {
+      return res.status(400).json({
+        message: "Invalid SubjectID",
+      });
+    }
     const data = await Tutor.updateClass(classroom, classID);
     if (!data) {
       return res.status(500).json({
