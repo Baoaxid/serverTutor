@@ -91,6 +91,38 @@ class Student {
       return result.recordset[0];
     }
   }
+
+  static async sendFeedback(classroom, message, rating) {
+    const connection = await connectDB();
+    const updated = await connection
+      .request()
+      .input("tutorID", sql.VarChar, classroom.tutorID)
+      .input("studentID", sql.VarChar, classroom.studentID)
+      .input("classID", sql.VarChar, classroom.classID)
+      .input("message", sql.VarChar, message)
+      .input("rating", sql.Int, rating)
+      .query(
+        "INSERT INTO Feedbacks (tutorID, studentID, classID, message, rating) VALUES (@tutorID, @studentID, @classID, @message, @rating)"
+      );
+    if (updated.rowsAffected > 0) {
+      const avg = await connection
+        .request()
+        .input("tutorID", sql.VarChar, classroom.tutorID)
+        .query(
+          "SELECT tutorID, ROUND(AVG(CAST(rating AS FLOAT)), 1) AS avg_rating FROM Feedbacks WHERE tutorID = @tutorID GROUP BY tutorID"
+        );
+      await connection
+        .request()
+        .input("tutorID", sql.VarChar, classroom.tutorID)
+        .input("rating", sql.VarChar, avg.recordset[0].avg_rating + "")
+        .query("UPDATE Tutors SET rating = @rating WHERE tutorID = @tutorID");
+      const result = await connection
+        .request()
+        .input("message", sql.VarChar, message)
+        .query("SELECT * FROM Feedbacks");
+      return result.recordset[result.recordset.length - 1];
+    }
+  }
 }
 
 module.exports = Student;

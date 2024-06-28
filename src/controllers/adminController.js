@@ -16,7 +16,7 @@ const updateUser = async (req, res) => {
       });
     }
 
-    const data = await User.updateUser(user, userID);
+    const data = await User.updateUserForAdmin(user, userID);
     if (!data) {
       return res.status(500).json({
         message: "Error in update user",

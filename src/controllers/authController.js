@@ -32,6 +32,12 @@ exports.loginUser = async (req, res) => {
       return res.status(400).json({ message: "Wrong Password" });
     }
 
+    if (!user.active) {
+      return res.status(403).json({
+        message: "User banned!",
+      });
+    }
+
     const token = User.generateAuthToken(user);
     res.status(200).json({ token, user });
   } catch (error) {

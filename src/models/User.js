@@ -7,6 +7,15 @@ const connectDB = require("../config/db");
 dotenv.config();
 
 class User {
+  static async getUsers(uID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("uID", sql.VarChar, uID)
+      .query(`SELECT * FROM Users WHERE userID = @uID`);
+    return result.recordset[0];
+  }
+
   static async findByEmail(email) {
     const connection = await connectDB();
     // const result = await connection.query(
@@ -50,7 +59,7 @@ class User {
     return await this.findByEmail(user.email);
   }
 
-  static async updateUser(user, userID) {
+  static async updateUserForAdmin(user, userID) {
     const connection = await connectDB();
     const hashedPassword = await bcrypt.hash(user.password, 10);
     const result = await connection
@@ -76,6 +85,37 @@ class User {
         phone = @phone,
         address = @address,
         active = @active
+    WHERE userID = @userID;
+`);
+
+    if (result.rowsAffected[0] > 0) {
+      return await this.findByEmail(user.email);
+    } else {
+      return null;
+    }
+  }
+
+  static async updateUser(user, userID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("username", sql.NVarChar, user.userName)
+      .input("fullName", sql.NVarChar, user.fullName)
+      .input("email", sql.VarChar, user.email)
+      .input("avatar", sql.VarChar, user.avatar)
+      .input("dateOfBirth", sql.Date, user.dateOfBirth)
+      .input("phone", sql.VarChar, user.phone)
+      .input("address", sql.NVarChar, user.address)
+      .input("userID", sql.Int, userID) // Assuming classID is a foreign key or some identifier
+      .query(`
+    UPDATE Users
+    SET userName = @username,
+        fullName = @fullName,
+        email = @email,
+        avatar = @avatar,
+        dateOfBirth = @dateOfBirth,
+        phone = @phone,
+        address = @address
     WHERE userID = @userID;
 `);
 

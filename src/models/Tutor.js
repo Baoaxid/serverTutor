@@ -117,6 +117,20 @@ class Tutor {
       return null;
     }
   }
+
+  static async findTutorByName(search) {
+    const connection = await connectDB();
+    if (search == undefined) {
+      search = "";
+    }
+    const result = await connection
+      .request()
+      .input("search", sql.VarChar, "%" + search + "%")
+      .query(
+        `SELECT * FROM Tutors WHERE uID in (SELECT userID FROM Users WHERE fullName like @search)`
+      );
+    return result.recordset;
+  }
 }
 
 module.exports = Tutor;
