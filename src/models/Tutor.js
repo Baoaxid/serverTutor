@@ -3,8 +3,6 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const connectDB = require("../config/db");
 const sql = require("mssql");
-const Payment = require("./Payment");
-const Subject = require("./Subject");
 
 dotenv.config();
 
@@ -22,6 +20,15 @@ class Tutor {
     return result.recordset[0];
   }
 
+  static async findClassByTutorID(tutorID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("tutorID", sql.VarChar, tutorID)
+      .query(`SELECT * FROM Classes WHERE tutorID = @tutorID`);
+    return result.recordset;
+  }
+
   static async createClass(classroom) {
     const connection = await connectDB();
     const id = await this.createClassID();
@@ -36,9 +43,11 @@ class Tutor {
       .input("type", sql.VarChar, classroom.type)
       .input("description", sql.VarChar, classroom.description)
       .input("price", sql.Float, classroom.price) // Ensure this matches the data type of 'price' column
+      .input("tutorID", sql.VarChar, classroom.tutorID)
+      .input("className", sql.VarChar, classroom.className)
       .query(
-        `INSERT INTO Classes (classID, subjectID, studentID, PaymentID, length, classesPerWeek, type, description, price)
-     VALUES (@classID, @subjectID, @studentID, @PaymentID, @length, @ClassPerWeek, @type, @description, @price)`
+        `INSERT INTO Classes (classID, subjectID, studentID, PaymentID, length, classesPerWeek, type, description, price, tutorID, className)
+     VALUES (@classID, @subjectID, @studentID, @PaymentID, @length, @ClassPerWeek, @type, @description, @price, @tutorID, @className)`
       );
     return await this.findClassroom(id);
   }
@@ -70,7 +79,9 @@ class Tutor {
       .input("ClassPerWeek", sql.VarChar, classroom.ClassPerWeek)
       .input("type", sql.VarChar, classroom.type)
       .input("description", sql.VarChar, classroom.description)
-      .input("price", sql.Float, classroom.price).query(`
+      .input("price", sql.Float, classroom.price)
+      .input("tutorID", sql.VarChar, classroom.tutorID)
+      .input("className", sql.VarChar, classroom.className).query(`
             UPDATE Classes
             SET subjectID = @subjectID,
                 studentID = @studentID,
@@ -79,7 +90,9 @@ class Tutor {
                 classesPerWeek = @ClassPerWeek,
                 type = @type,
                 description = @description,
-                price = @price
+                price = @price,
+                tutorID = @tutorID,
+                className = @className
             WHERE classID = @classID;
         `);
     if (result.rowsAffected[0] > 0) {

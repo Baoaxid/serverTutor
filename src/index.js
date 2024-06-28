@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const authRoutes = require("./routes/auth");
 const studentRoutes = require("./routes/studentRoutes");
 const tutorRoutes = require("./routes/tutorRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const connectDB = require("./config/db");
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes); // Mount auth routes
+app.use("/api/admin", adminRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/tutors", tutorRoutes);
 

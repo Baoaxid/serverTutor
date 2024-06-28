@@ -1,11 +1,12 @@
 const Tutor = require("../models/Tutor");
-
-const paymentList = await Payment.getAllPayment();
-const subjectList = await Subject.getAllSubject();
+const Payment = require("../models/Payment");
+const Subject = require("../models/Subject");
 
 const createClasses = async (req, res) => {
   try {
     const classroom = req.body;
+    const paymentList = await Payment.getAllPayment();
+    const subjectList = await Subject.getAllSubject();
     const isPaymentValid = paymentList.some(
       (payment) => payment.paymentID === classroom.PaymentID
     );
@@ -25,6 +26,7 @@ const createClasses = async (req, res) => {
       });
     }
     if (
+      !classroom.className ||
       !classroom.subjectID ||
       //!classroom.studentID ||
       !classroom.PaymentID ||
@@ -32,7 +34,8 @@ const createClasses = async (req, res) => {
       !classroom.ClassPerWeek ||
       !classroom.type ||
       !classroom.description ||
-      !classroom.price
+      !classroom.price ||
+      !classroom.tutorID
     ) {
       return res.status(500).json({
         message: "Please provide all field",
@@ -69,24 +72,31 @@ const updateClasses = async (req, res) => {
       });
     }
     const classroom = req.body;
-    const isPaymentValid = paymentList.some(
-      (payment) => payment.paymentID === classroom.PaymentID
-    );
-    const isSubjectValid = subjectList.some(
-      (subject) => subject.subjectID === classroom.subjectID
-    );
 
-    if (!isPaymentValid) {
-      return res.status(400).json({
-        message: "Invalid PaymentID",
-      });
+    if (classroom.PaymentID) {
+      const paymentList = await Payment.getAllPayment();
+      const isPaymentValid = paymentList.some(
+        (payment) => payment.paymentID == classroom.PaymentID
+      );
+      if (!isPaymentValid) {
+        return res.status(400).json({
+          message: "Invalid PaymentID",
+        });
+      }
     }
 
-    if (!isSubjectValid) {
-      return res.status(400).json({
-        message: "Invalid SubjectID",
-      });
+    if (classroom.subjectID) {
+      const subjectList = await Subject.getAllSubject();
+      const isSubjectValid = subjectList.some(
+        (subject) => subject.subjectID == classroom.subjectID
+      );
+      if (!isSubjectValid) {
+        return res.status(400).json({
+          message: "Invalid SubjectID",
+        });
+      }
     }
+
     const data = await Tutor.updateClass(classroom, classID);
     if (!data) {
       return res.status(500).json({
@@ -94,7 +104,7 @@ const updateClasses = async (req, res) => {
       });
     }
 
-    return res.status(500).json({
+    return res.status(200).json({
       message: "Classroom's detail updated",
       data,
     });
@@ -123,7 +133,7 @@ const deleteClasses = async (req, res) => {
       });
     }
 
-    return res.status(500).json({
+    return res.status(200).json({
       message: "Classroom deleted",
       data,
     });
@@ -136,4 +146,38 @@ const deleteClasses = async (req, res) => {
   }
 };
 
-module.exports = { createClasses, updateClasses, deleteClasses };
+const findClassroomByTutorID = async (req, res) => {
+  try {
+    const tutorID = req.params.search;
+    if (!tutorID) {
+      return res.status(404).json({
+        message: "Please provide tutorID",
+      });
+    }
+
+    const classroom = await Tutor.findClassByTutorID(tutorID);
+    if (!classroom) {
+      return res.status(500).json({
+        message: "Error in find classroom by tutor id",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Found classroom",
+      classroom,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Error in delete class in Server",
+      error,
+    });
+  }
+};
+
+module.exports = {
+  createClasses,
+  updateClasses,
+  deleteClasses,
+  findClassroomByTutorID,
+};
