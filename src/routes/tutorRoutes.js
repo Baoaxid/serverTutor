@@ -1,20 +1,13 @@
 const express = require("express");
-const {
-  findClassroomByTutorID,
-  viewStudentInClass,
-} = require("../controllers/classController");
-const {
-  createClasses,
-  updateClasses,
-  deleteClasses,
-} = require("../controllers/tutorController");
+const classController = require("../controllers/classController");
+const tutorController = require("../controllers/tutorController");
 
 const router = express.Router();
 
-router.post("/createClasses", createClasses);
-router.post("/updateClasses/:id", updateClasses); //need auth for update
-router.delete("/deleteClasses/:id", deleteClasses);
-router.post("/findClasses/:search", findClassroomByTutorID);
-router.get("/viewStudent/:classID", viewStudentInClass);
+router.post("/createClasses", tutorController.createClasses);
+router.post("/updateClasses/:id", tutorController.updateClasses); //need auth for update
+router.delete("/deleteClasses/:id", tutorController.deleteClasses);
+router.post("/findClasses/:search", classController.findClassroomByTutorID);
+router.get("/viewStudent/:classID", classController.viewStudentInClass);
 
 module.exports = router;

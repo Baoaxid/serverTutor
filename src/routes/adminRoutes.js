@@ -1,14 +1,11 @@
 const express = require("express");
-const {
-  updateUser,
-  banUsers,
-  unbanUsers,
-} = require("../controllers/adminController");
+const adminController = require("../controllers/adminController");
 
 const router = express.Router();
 
-router.put("/updateUsers/:id", updateUser);
-router.put("/banUsers/:id", banUsers);
-router.put("/unbanUsers/:id", unbanUsers);
+router.put("/updateUsers/:id", adminController.updateUser);
+router.put("/banUsers/:id", adminController.banUsers);
+router.put("/unbanUsers/:id", adminController.unbanUsers);
+router.get("/complainList", adminController.getComplainList);
 
 module.exports = router;

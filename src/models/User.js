@@ -169,6 +169,26 @@ class User {
   static async comparePassword(candidatePassword, hashedPassword) {
     return await bcrypt.compare(candidatePassword, hashedPassword);
   }
+
+  static async sendComplain(userID, message) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("userID", sql.Int, userID)
+      .input("message", sql.NVarChar, message)
+      .query(
+        `INSERT INTO [dbo].[Complains] ([uID], [message])
+          OUTPUT inserted.[complainID], inserted.[uID], inserted.[message]
+          VALUES (@userID, @message)`
+      );
+    return result.recordset[0];
+  }
+
+  static async getComplain() {
+    const connection = await connectDB();
+    const result = await connection.request().query(`SELECT * FROM Complains`);
+    return result.recordset;
+  }
 }
 
 module.exports = User;
