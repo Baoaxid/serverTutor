@@ -29,6 +29,15 @@ class Tutor {
     return result.recordset;
   }
 
+  static async findTutorByTutorID(tutorID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("tutorID", sql.VarChar, tutorID)
+      .query(`SELECT * FROM Tutors WHERE tutorID = @tutorID`);
+    return result.recordset;
+  }
+
   static async createClass(classroom) {
     const connection = await connectDB();
     const id = await this.createClassID();
@@ -36,7 +45,7 @@ class Tutor {
       .request()
       .input("classID", sql.VarChar, id)
       .input("subjectID", sql.VarChar, classroom.subjectID)
-      .input("studentID", sql.VarChar, "")
+      .input("studentID", sql.VarChar, classroom.studentID)
       .input("PaymentID", sql.Int, classroom.PaymentID)
       .input("length", sql.VarChar, classroom.length) // Ensure this matches the data type of 'length' column
       .input("ClassPerWeek", sql.VarChar, classroom.ClassPerWeek) // Ensure this matches the data type of 'Class/week' column
@@ -130,6 +139,37 @@ class Tutor {
         `SELECT * FROM Tutors WHERE uID in (SELECT userID FROM Users WHERE fullName like @search)`
       );
     return result.recordset;
+  }
+
+  static async getRequest(tutorID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("tutorID", sql.VarChar, tutorID)
+      .query(`SELECT * FROM Requests WHERE tutorID = @tutorID`);
+    return result.recordset;
+  }
+
+  static async getRequestByID(requestID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("requestID", sql.Int, requestID)
+      .query(`SELECT * FROM Requests WHERE requestID = @requestID`);
+    return result.recordset[0];
+  }
+
+  static async deleteRequest(requestID) {
+    const connection = await connectDB();
+    const del = await connection
+      .request()
+      .input("requestID", sql.VarChar, requestID)
+      .query(`DELETE Requests WHERE requestID = @requestID`);
+    if (del.rowsAffected > 0) {
+      return true;
+    } else {
+      return null;
+    }
   }
 }
 

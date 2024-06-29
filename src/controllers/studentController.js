@@ -3,6 +3,47 @@ const Student = require("../models/Student");
 const Tutor = require("../models/Tutor");
 
 class studentController {
+  static requestClass = async (req, res) => {
+    try {
+      const tutorID = req.params.tutorID;
+      if (!tutorID) {
+        return res.status(404).json({
+          message: "Please provide tutor id",
+        });
+      }
+      const tutor = Tutor.findTutorByTutorID(tutorID);
+      if (!tutor) {
+        return res.status(404).json({
+          message: "Cannot find Tutor",
+        });
+      }
+
+      const { studentID, message } = req.body;
+
+      const data = await Student.sendRequestToTutor(
+        tutorID,
+        studentID,
+        message
+      );
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot send request",
+        });
+      }
+
+      res.status(200).json({
+        message: "Request sent",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "error in send request class to tutor",
+        error,
+      });
+    }
+  };
+
   static findClassByTutorNameController = async (req, res) => {
     try {
       const search = req.params.search;
@@ -90,6 +131,11 @@ class studentController {
     try {
       const classID = req.params.id;
       const { studentID } = req.body;
+      if (!studentID) {
+        return res.status(404).json({
+          message: "Please provide student id",
+        });
+      }
 
       const student = await Student.findStudentByID(studentID);
       if (!student) {

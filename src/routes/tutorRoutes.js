@@ -9,5 +9,7 @@ router.post("/updateClasses/:id", tutorController.updateClasses); //need auth fo
 router.delete("/deleteClasses/:id", tutorController.deleteClasses);
 router.post("/findClasses/:search", classController.findClassroomByTutorID);
 router.get("/viewStudent/:classID", classController.viewStudentInClass);
+router.get("/viewRequest/:tutorID", tutorController.getRequest);
+router.delete("/confirmRequest", tutorController.confirmRequest);
 
 module.exports = router;

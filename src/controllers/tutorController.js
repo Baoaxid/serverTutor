@@ -1,6 +1,7 @@
 const Tutor = require("../models/Tutor");
 const Payment = require("../models/Payment");
 const Subject = require("../models/Subject");
+const Student = require("../models/Student");
 
 class tutorController {
   static createClasses = async (req, res) => {
@@ -29,7 +30,6 @@ class tutorController {
       if (
         !classroom.className ||
         !classroom.subjectID ||
-        //!classroom.studentID ||
         !classroom.PaymentID ||
         !classroom.length ||
         !classroom.ClassPerWeek ||
@@ -41,6 +41,15 @@ class tutorController {
         return res.status(500).json({
           message: "Please provide all field",
         });
+      }
+
+      if (classroom.studentID) {
+        const student = await Student.findStudentByID(classroom.studentID);
+        if (!student) {
+          return res.status(404).json({
+            message: "Cannot found student!",
+          });
+        }
       }
 
       const data = await Tutor.createClass(classroom);
@@ -142,6 +151,83 @@ class tutorController {
       console.log(error);
       res.status(500).json({
         message: "Error in delete class in Server",
+        error,
+      });
+    }
+  };
+
+  static getRequest = async (req, res) => {
+    try {
+      const tutorID = req.params.tutorID;
+      if (!tutorID) {
+        return res.status(404).json({
+          message: "Please provide tutor id",
+        });
+      }
+      const tutor = Tutor.findTutorByTutorID(tutorID);
+      if (!tutor) {
+        return res.status(404).json({
+          message: "Cannot find Tutor",
+        });
+      }
+
+      const data = await Tutor.getRequest(tutorID);
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot get request",
+        });
+      }
+
+      res.status(200).json({
+        message: "Request get success",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "error in get request by tutor",
+        error,
+      });
+    }
+  };
+
+  static confirmRequest = async (req, res) => {
+    try {
+      const { requestID, confirm, classroom } = req.body;
+      const request = await Tutor.getRequestByID(requestID);
+      if (!request.studentID || !request.tutorID) {
+        return res.status(500).json({
+          message: "Request not found",
+        });
+      }
+      classroom.studentID = request.studentID;
+      classroom.tutorID = request.tutorID;
+
+      if (confirm) {
+        const result = await Tutor.createClass(classroom);
+        if (!result) {
+          return res.status(500).json({
+            message: "Cannot create class",
+          });
+        }
+      }
+
+      const data = await Tutor.deleteRequest(requestID);
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot confirm request",
+        });
+      }
+
+      res.status(200).json({
+        message: "Request confirmed",
+        confirm,
+        request,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "error in confirm request by tutor",
         error,
       });
     }

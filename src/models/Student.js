@@ -7,6 +7,19 @@ const connectDB = require("../config/db");
 dotenv.config();
 
 class Student {
+  static async sendRequestToTutor(tutorID, studentID, message) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("tutorID", sql.VarChar, tutorID)
+      .input("studentID", sql.VarChar, studentID)
+      .input("message", sql.VarChar, message)
+      .query(
+        "INSERT INTO Requests (tutorID, studentID, message) OUTPUT inserted.* VALUES (@tutorID, @studentID, @message)"
+      );
+    return result.recordset[0];
+  }
+
   static async findStudentByID(studentID) {
     const connection = await connectDB();
     const result = await connection
