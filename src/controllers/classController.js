@@ -2,6 +2,28 @@ const Tutor = require("../models/Tutor");
 const Classroom = require("../models/Class");
 
 class classController {
+  static getAllClass = async (req, res) => {
+    try {
+      const data = await Classroom.getAllClass();
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot find class list in database",
+        });
+      }
+
+      res.status(200).json({
+        message: "Get class list success",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error in get class list in Server",
+        error,
+      });
+    }
+  };
+
   static getClass = async (req, res) => {
     try {
       const id = req.params.id;

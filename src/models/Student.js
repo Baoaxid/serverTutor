@@ -7,6 +7,52 @@ const connectDB = require("../config/db");
 dotenv.config();
 
 class Student {
+  constructor({ userID, studentID, grade, school }) {
+    this.userID = userID;
+    this.studentID = studentID;
+    this.grade = grade;
+    this.school = school;
+  }
+
+  static async createStudentID() {
+    await connectDB();
+    const result =
+      await sql.query`SELECT studentID FROM Students ORDER BY studentID DESC`;
+    if (!result.recordset[0]) {
+      let id = "S1";
+      return id;
+    } else {
+      let id = result.recordset[result.recordset.length - 1].classID;
+      const alphabet = id.match(/[A-Za-z]+/)[0];
+      const number = parseInt(id.match(/\d+/)[0]) + 1;
+      id = alphabet + number;
+      return id;
+    }
+  }
+
+  static async createStudent(userId, studentData) {
+    try {
+      await connectDB(); // Ensure database connection
+      const studentID = await this.createStudentID();
+      await sql.query`
+        INSERT INTO Students (userID, studentID, grade, school)
+        VALUES (${userId}, ${studentID}, ${studentData.grade}, ${studentData.school});
+      `;
+      return new Student({
+        ...studentData,
+      });
+    } catch (error) {
+      console.error("Error creating student:", error);
+      throw error;
+    }
+  }
+
+  static async getAllStudent() {
+    const connection = await connectDB();
+    const result = await connection.request().query(`SELECT * FROM Students`);
+    return result.recordset;
+  }
+
   static async sendRequestToTutor(tutorID, studentID, message) {
     const connection = await connectDB();
     const result = await connection
@@ -29,13 +75,22 @@ class Student {
     return result.recordset[0];
   }
 
+  static async findStudentByUserID(userID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("userID", sql.Int, userID)
+      .query("SELECT * FROM Students WHERE userID = @userID");
+    return result.recordset[0];
+  }
+
   static async findClassByTutorName(search) {
     const connection = await connectDB();
     const result = await connection
       .request()
       .input("tutorName", sql.VarChar, "%" + search + "%")
       .query(
-        "SELECT * FROM Classes WHERE tutorID in (SELECT tutorID FROM Tutors WHERE uID in (SELECT userID FROM Users WHERE fullName like @tutorName))"
+        "SELECT * FROM Classes WHERE tutorID in (SELECT tutorID FROM Tutors WHERE userID in (SELECT userID FROM Users WHERE fullName like @tutorName))"
       );
     return result.recordset;
   }

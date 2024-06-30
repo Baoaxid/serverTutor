@@ -7,12 +7,65 @@ const sql = require("mssql");
 dotenv.config();
 
 class Tutor {
+  constructor({
+    userID,
+    tutorID,
+    degrees,
+    identityCard,
+    workplace,
+    description,
+  }) {
+    this.userID = userID;
+    this.tutorID = tutorID;
+
+    this.degrees = degrees;
+    this.identityCard = identityCard;
+    this.workplace = workplace;
+    this.description = description;
+  }
+
+  static async createTutorID() {
+    await connectDB();
+    const result =
+      await sql.query`SELECT tutorID FROM Tutors ORDER BY tutorID DESC`;
+    if (!result.recordset[0]) {
+      let id = "T1";
+      return id;
+    } else {
+      let id = result.recordset[result.recordset.length - 1].classID;
+      const alphabet = id.match(/[A-Za-z]+/)[0];
+      const number = parseInt(id.match(/\d+/)[0]) + 1;
+      id = alphabet + number;
+      return id;
+    }
+  }
+
+  static async createTutor(userId, tutorData) {
+    try {
+      await connectDB(); // Ensure database connection
+      const tutorID = await this.createTutorID();
+      await sql.query`
+        INSERT INTO Tutors (userID, tutorID, degrees, identityCard, workplace, description)
+        VALUES (${userId}, ${tutorID}, ${tutorData.degrees}, ${tutorData.identityCard}, 
+                ${tutorData.workplace}, ${tutorData.description});
+      `;
+      return new Tutor({
+        ...tutorData,
+      });
+    } catch (error) {
+      console.error("Error creating tutor:", error);
+      throw error;
+    }
+  }
+
+  static async getAllTutor() {
+    const connection = await connectDB();
+    const result = await connection.request().query(`SELECT * FROM Tutors`);
+    return result.recordset;
+  }
+
   static async findClassroom(classroomID) {
     const connection = await connectDB();
-    // const result = await connection.query(
-    //   `SELECT classID, subject, studentID, PaymentID, length, Class/week, type, description, price FROM Classes WHERE classID = ?`,
-    //   [classroom.classID]
-    // );
     const result = await connection
       .request()
       .input("classID", sql.VarChar, classroomID)
@@ -35,6 +88,15 @@ class Tutor {
       .request()
       .input("tutorID", sql.VarChar, tutorID)
       .query(`SELECT * FROM Tutors WHERE tutorID = @tutorID`);
+    return result.recordset;
+  }
+
+  static async findTutorByTutorUserID(userID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("userID", sql.Int, userID)
+      .query(`SELECT * FROM Tutors WHERE userID = @userID`);
     return result.recordset;
   }
 
@@ -136,7 +198,7 @@ class Tutor {
       .request()
       .input("search", sql.VarChar, "%" + search + "%")
       .query(
-        `SELECT * FROM Tutors WHERE uID in (SELECT userID FROM Users WHERE fullName like @search)`
+        `SELECT * FROM Tutors WHERE userID in (SELECT userID FROM Users WHERE fullName like @search)`
       );
     return result.recordset;
   }
