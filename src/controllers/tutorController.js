@@ -2,6 +2,7 @@ const Tutor = require("../models/Tutor");
 const Payment = require("../models/Payment");
 const Subject = require("../models/Subject");
 const Student = require("../models/Student");
+const Classroom = require("../models/Class");
 
 class tutorController {
   static getAllTutor = async (req, res) => {
@@ -101,6 +102,12 @@ class tutorController {
       if (!classID) {
         return res.status(404).json({
           message: "Invalid class id",
+        });
+      }
+      const classes = await Classroom.getClassroom(classID);
+      if (!classes) {
+        return res.status(500).json({
+          message: "Class does not exist",
         });
       }
       const classroom = req.body;

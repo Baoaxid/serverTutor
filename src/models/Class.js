@@ -24,7 +24,7 @@ class Classroom {
       .input("classID", sql.VarChar, classID).query(`
         SELECT Students.studentID, fullName, Students.grade, Students.school FROM Users
         JOIN Students ON Users.userID = Students.userID
-        WHERE Users.userID = (SELECT userID FROM Classes WHERE classID = @classID)`);
+        WHERE Students.studentID = (SELECT studentID FROM Classes WHERE classID = @classID)`);
     return result.recordset[0];
   }
 }

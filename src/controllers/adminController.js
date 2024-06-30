@@ -4,7 +4,6 @@ class adminController {
   static updateUser = async (req, res) => {
     try {
       const userID = req.params.id;
-      console.log(userID);
       if (!userID) {
         return res.status(404).json({
           message: "Missing user id",
