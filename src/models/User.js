@@ -33,6 +33,15 @@ class User {
     this.active = active;
   }
 
+  static async getModerator() {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("role", sql.VarChar, "Moderator")
+      .query(`SELECT * FROM Users WHERE role = @role`);
+    return result.recordset;
+  }
+
   static async getUsers(userID) {
     const connection = await connectDB();
     const result = await connection

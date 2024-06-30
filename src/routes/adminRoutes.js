@@ -3,6 +3,7 @@ const adminController = require("../controllers/adminController");
 const tutorController = require("../controllers/tutorController");
 const studentController = require("../controllers/studentController");
 const classController = require("../controllers/classController");
+const userController = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -13,5 +14,6 @@ router.get("/complainList", adminController.getComplainList);
 router.get("/tutorList", tutorController.getAllTutor);
 router.get("/studentList", studentController.getAllStudent);
 router.get("/classList", classController.getAllClass);
+router.get("/modList", userController.getMod);
 
 module.exports = router;

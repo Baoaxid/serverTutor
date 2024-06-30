@@ -1,6 +1,28 @@
 const User = require("../models/User");
 
 class userController {
+  static getMod = async (req, res) => {
+    try {
+      const data = await User.getModerator();
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot find mod list in database",
+        });
+      }
+
+      res.status(200).json({
+        message: "Get mod list success",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error in get mod list in Server",
+        error,
+      });
+    }
+  };
+
   static updateUserForUser = async (req, res) => {
     try {
       const userID = req.params.id;
