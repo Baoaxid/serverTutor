@@ -1,6 +1,54 @@
 const User = require("../models/User");
 
 class adminController {
+  static handleTutor = async (req, res) => {
+    try {
+      const userID = req.params.id;
+      if (!userID) {
+        return res.status(404).json({
+          message: "Please provide user id",
+        });
+      }
+      const check = await User.searchRequest(userID);
+      if (!check) {
+        return res.status(404).json({
+          message: "Cannot find request of this user",
+        });
+      }
+
+      const { status } = req.body;
+
+      if (status == "Accept") {
+        const data = await User.unbanUser(userID);
+        await User.updateRequestStatus(userID, status);
+        if (!data) {
+          return res.status(500).json({
+            message: "Error in confirm tutor",
+          });
+        }
+        return res.status(200).json({
+          message: "Tutor Confirmed",
+        });
+      } else if (status == "Deny") {
+        await User.updateRequestStatus(userID, status);
+        return res.status(200).json({
+          message: "Tutor Denied",
+        });
+      }
+
+      return res.status(500).json({
+        message: "Status not correct",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error in unban user in Server",
+        error,
+      });
+    }
+  };
+
   static updateUser = async (req, res) => {
     try {
       const userID = req.params.id;

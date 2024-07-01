@@ -114,7 +114,7 @@ class authController {
         phone,
         address,
         role: "Tutor",
-        active: 1,
+        active: 0, //để inactive khi nào đc duyệt thì tự động active
       });
 
       // Create tutor
@@ -125,10 +125,24 @@ class authController {
         description,
       });
 
+      console.log(tutor);
+
+      const request = await Tutor.registerTutor(user.userID, tutor.tutorID);
+      if (!request) {
+        return res.status(500).json({
+          message: "Tutor request sent fail",
+        });
+      }
+
       // Generate authentication token
       const token = User.generateAuthToken(user);
 
-      res.status(201).json({ token, user, tutor });
+      res.status(201).json({
+        message: "Tutor request sent, please wait for accept",
+        token,
+        user,
+        tutor,
+      });
     } catch (error) {
       console.error("Error registering tutor:", error);
       res.status(500).json({ message: "Server error" });

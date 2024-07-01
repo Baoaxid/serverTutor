@@ -24,15 +24,29 @@ class Tutor {
     this.description = description;
   }
 
+  static async registerTutor(userId, tutorID) {
+    try {
+      await connectDB(); // Ensure database connection
+      const result = await sql.query`
+        INSERT INTO TutorRequests (userID, tutorID, status)
+        OUTPUT inserted.*
+        VALUES (${userId}, ${tutorID}, ${"Pending"});
+      `;
+      return result;
+    } catch (error) {
+      console.error("Error creating tutor request:", error);
+      throw error;
+    }
+  }
+
   static async createTutorID() {
-    await connectDB();
-    const result =
-      await sql.query`SELECT tutorID FROM Tutors ORDER BY tutorID DESC`;
+    const connection = await connectDB();
+    const result = await connection.request().query(`SELECT * FROM Tutors`);
     if (!result.recordset[0]) {
       let id = "T1";
       return id;
     } else {
-      let id = result.recordset[result.recordset.length - 1].classID;
+      let id = result.recordset[result.recordset.length - 1].tutorID;
       const alphabet = id.match(/[A-Za-z]+/)[0];
       const number = parseInt(id.match(/\d+/)[0]) + 1;
       id = alphabet + number;
@@ -40,16 +54,18 @@ class Tutor {
     }
   }
 
-  static async createTutor(userId, tutorData) {
+  static async createTutor(userID, tutorData) {
     try {
       await connectDB(); // Ensure database connection
       const tutorID = await this.createTutorID();
       await sql.query`
         INSERT INTO Tutors (userID, tutorID, degrees, identityCard, workplace, description)
-        VALUES (${userId}, ${tutorID}, ${tutorData.degrees}, ${tutorData.identityCard}, 
+        VALUES (${userID}, ${tutorID}, ${tutorData.degrees}, ${tutorData.identityCard}, 
                 ${tutorData.workplace}, ${tutorData.description});
       `;
       return new Tutor({
+        userID,
+        tutorID,
         ...tutorData,
       });
     } catch (error) {

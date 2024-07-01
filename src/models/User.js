@@ -191,6 +191,33 @@ class User {
     }
   }
 
+  static async searchRequest(userID) {
+    const connection = await connectDB();
+    const result = await connection.request().input("userID", sql.Int, userID)
+      .query(`
+            SELECT * FROM TutorRequests
+            WHERE userID = @userID;
+        `);
+    return result.recordset[0];
+  }
+
+  static async updateRequestStatus(userID, status) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("userID", sql.Int, userID)
+      .input("status", sql.VarChar, status).query(`
+            UPDATE TutorRequests
+            SET status = @status
+            WHERE userID = @userID;
+        `);
+    if (result.rowsAffected[0] > 0) {
+      return true;
+    } else {
+      return null;
+    }
+  }
+
   static generateAuthToken(user) {
     return jwt.sign(
       { id: user.userID, email: user.email },
