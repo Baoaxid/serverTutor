@@ -201,6 +201,14 @@ class User {
     return result.recordset[0];
   }
 
+  static async getRequest() {
+    const connection = await connectDB();
+    const result = await connection.request().query(`
+            SELECT * FROM TutorRequests
+        `);
+    return result.recordset;
+  }
+
   static async updateRequestStatus(userID, status) {
     const connection = await connectDB();
     const result = await connection

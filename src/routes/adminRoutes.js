@@ -15,6 +15,7 @@ router.get("/tutorList", tutorController.getAllTutor);
 router.get("/studentList", studentController.getAllStudent);
 router.get("/classList", classController.getAllClass);
 router.get("/modList", userController.getMod);
+router.get("/getRequest", adminController.getTutorRequest);
 router.post("/handleTutor/:id", adminController.handleTutor);
 
 module.exports = router;

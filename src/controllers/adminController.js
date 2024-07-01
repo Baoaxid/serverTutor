@@ -1,6 +1,28 @@
 const User = require("../models/User");
 
 class adminController {
+  static getTutorRequest = async (req, res) => {
+    try {
+      const data = await User.getRequest();
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot find request",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Request Tutor list",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error in search tutor request in Server",
+        error,
+      });
+    }
+  };
+
   static handleTutor = async (req, res) => {
     try {
       const userID = req.params.id;
@@ -43,7 +65,7 @@ class adminController {
     } catch (error) {
       console.log(error);
       res.status(500).json({
-        message: "Error in unban user in Server",
+        message: "Error in confirm tutor in Server",
         error,
       });
     }
