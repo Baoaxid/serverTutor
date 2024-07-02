@@ -129,6 +129,11 @@ class studentController {
           message: "Cannot enroll because there still a student in the class",
         });
       }
+      if (!classroom.isActive) {
+        return res.status(409).json({
+          message: "Cannot enroll because the class is deleted",
+        });
+      }
 
       let data = await Student.enrollClasses(classID, studentID);
       if (!data) {

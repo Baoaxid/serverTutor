@@ -1,6 +1,5 @@
 const Tutor = require("../models/Tutor");
 const Payment = require("../models/Payment");
-const Subject = require("../models/Subject");
 const Student = require("../models/Student");
 const Classroom = require("../models/Class");
 
@@ -31,12 +30,8 @@ class tutorController {
     try {
       const classroom = req.body;
       const paymentList = await Payment.getAllPayment();
-      const subjectList = await Subject.getAllSubject();
       const isPaymentValid = paymentList.some(
         (payment) => payment.paymentID === classroom.PaymentID
-      );
-      const isSubjectValid = subjectList.some(
-        (subject) => subject.subjectID === classroom.subjectID
       );
 
       if (!isPaymentValid) {
@@ -45,17 +40,12 @@ class tutorController {
         });
       }
 
-      if (!isSubjectValid) {
-        return res.status(400).json({
-          message: "Invalid SubjectID",
-        });
-      }
       if (
         !classroom.className ||
-        !classroom.subjectID ||
+        !classroom.subject ||
         !classroom.PaymentID ||
         !classroom.length ||
-        !classroom.ClassPerWeek ||
+        !classroom.available ||
         !classroom.type ||
         !classroom.description ||
         !classroom.price ||
@@ -120,18 +110,6 @@ class tutorController {
         if (!isPaymentValid) {
           return res.status(400).json({
             message: "Invalid PaymentID",
-          });
-        }
-      }
-
-      if (classroom.subjectID) {
-        const subjectList = await Subject.getAllSubject();
-        const isSubjectValid = subjectList.some(
-          (subject) => subject.subjectID == classroom.subjectID
-        );
-        if (!isSubjectValid) {
-          return res.status(400).json({
-            message: "Invalid SubjectID",
           });
         }
       }

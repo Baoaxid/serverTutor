@@ -83,10 +83,11 @@ class userController {
         });
       }
 
+      const token = User.generateAuthToken({ ...data, ...updated });
       return res.status(200).json({
         message: "User's detail updated",
-        user: data,
-        updated,
+        token,
+        user: { ...data, ...updated },
       });
     } catch (error) {
       console.log(error);

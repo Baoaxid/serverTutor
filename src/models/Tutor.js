@@ -139,25 +139,26 @@ class Tutor {
   static async createClass(classroom) {
     const connection = await connectDB();
     const id = await this.createClassID();
-    await connection
+    const result = await connection
       .request()
       .input("classID", sql.VarChar, id)
-      .input("subjectID", sql.VarChar, classroom.subjectID)
+      .input("subject", sql.VarChar, classroom.subject)
       .input("studentID", sql.VarChar, classroom.studentID)
       .input("PaymentID", sql.Int, classroom.PaymentID)
       .input("length", sql.VarChar, classroom.length) // Ensure this matches the data type of 'length' column
-      .input("ClassPerWeek", sql.VarChar, classroom.ClassPerWeek) // Ensure this matches the data type of 'Class/week' column
+      .input("available", sql.VarChar, classroom.available)
       .input("type", sql.VarChar, classroom.type)
       .input("description", sql.VarChar, classroom.description)
       .input("price", sql.Float, classroom.price) // Ensure this matches the data type of 'price' column
       .input("tutorID", sql.VarChar, classroom.tutorID)
       .input("className", sql.VarChar, classroom.className)
-      .input("thumbnail", sql.VarChar, classroom.thumbnail)
+      .input("videoLink", sql.VarChar, classroom.videoLink)
       .query(
-        `INSERT INTO Classes (classID, subjectID, studentID, PaymentID, length, classesPerWeek, type, description, price, tutorID, className, thumbnail)
-     VALUES (@classID, @subjectID, @studentID, @PaymentID, @length, @ClassPerWeek, @type, @description, @price, @tutorID, @className, @thumbnail)`
+        `INSERT INTO Classes (classID, subject, studentID, PaymentID, length, available, type, description, price, tutorID, className, videoLink)
+        OUTPUT inserted.*
+     VALUES (@classID, @subject, @studentID, @PaymentID, @length, @available, @type, @description, @price, @tutorID, @className, @videoLink)`
       );
-    return await this.findClassroom(id);
+    return result.recordset[0];
   }
 
   static async createClassID() {
@@ -180,49 +181,45 @@ class Tutor {
     const result = await connection
       .request()
       .input("classID", sql.VarChar, classID)
-      .input("subjectID", sql.VarChar, classroom.subjectID)
+      .input("subject", sql.VarChar, classroom.subject)
       .input("studentID", sql.VarChar, classroom.studentID)
       .input("PaymentID", sql.Int, classroom.PaymentID)
-      .input("length", sql.VarChar, classroom.length)
-      .input("ClassPerWeek", sql.VarChar, classroom.ClassPerWeek)
+      .input("length", sql.VarChar, classroom.length) // Ensure this matches the data type of 'length' column
+      .input("available", sql.VarChar, classroom.available)
       .input("type", sql.VarChar, classroom.type)
       .input("description", sql.VarChar, classroom.description)
-      .input("price", sql.Float, classroom.price)
+      .input("price", sql.Float, classroom.price) // Ensure this matches the data type of 'price' column
       .input("tutorID", sql.VarChar, classroom.tutorID)
       .input("className", sql.VarChar, classroom.className)
-      .input("thumbnail", sql.VarChar, classroom.thumbnail).query(`
+      .input("videoLink", sql.VarChar, classroom.videoLink).query(`
             UPDATE Classes
-            SET subjectID = @subjectID,
+            SET subject = @subject,
                 studentID = @studentID,
                 PaymentID = @PaymentID,
                 length = @length,
-                classesPerWeek = @ClassPerWeek,
+                available = @available,
                 type = @type,
                 description = @description,
                 price = @price,
                 tutorID = @tutorID,
                 className = @className,
-                thumbnail = @thumbnail
+                videoLink = @videoLink
             OUTPUT inserted.*
             WHERE classID = @classID;
         `);
     return result.recordset[0];
   }
 
-  static async deleteClass(classId) {
+  static async deleteClass(classID) {
     const connection = await connectDB();
-    const data = await this.findClassroom(classId);
     const result = await connection
       .request()
-      .input("classID", sql.VarChar, classId).query(`
-            DELETE FROM Classes
+      .input("classID", sql.VarChar, classID).query(`
+            UPDATE Classes SET isActive = 0
+            OUTPUT inserted.*
             WHERE classID = @classID;
         `);
-    if (result.rowsAffected[0] > 0) {
-      return data;
-    } else {
-      return null;
-    }
+    return result.recordset[0];
   }
 
   static async findTutorByName(search) {

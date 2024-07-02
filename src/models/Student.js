@@ -110,17 +110,6 @@ class Student {
     return result.recordset;
   }
 
-  static async findClassBySubject(subject) {
-    const connection = await connectDB();
-    const result = await connection
-      .request()
-      .input("subject", sql.VarChar, "%" + subject + "%")
-      .query(
-        "select * from Class where subjectID in (select subjectID from Subject where subjectName like @subject)"
-      );
-    return result.recordset;
-  }
-
   static async findClassByName(name) {
     const connection = await connectDB();
     const result = await connection
