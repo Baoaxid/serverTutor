@@ -125,8 +125,6 @@ class authController {
         description,
       });
 
-      console.log(tutor);
-
       const request = await Tutor.registerTutor(user.userID, tutor.tutorID);
       if (!request) {
         return res.status(500).json({
@@ -170,9 +168,8 @@ class authController {
 
   static loginUser = async (req, res) => {
     const { email, password } = req.body;
-
     try {
-      const user = await User.findByEmail(email);
+      let user = await User.findByEmail(email);
       if (!user) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
@@ -180,7 +177,6 @@ class authController {
       if (!isMatch) {
         return res.status(400).json({ message: "Wrong Password" });
       }
-      console.log(user);
 
       if (!user.active) {
         return res.status(403).json({
@@ -188,16 +184,16 @@ class authController {
         });
       }
 
-      const token = User.generateAuthToken(user);
       if (user.role == "Student") {
         const student = await Student.findStudentByUserID(user.userID);
-        res.status(200).json({ token, user, student });
+        user = { ...user, ...student };
       } else if (user.role == "Tutor") {
-        const tutor = await Tutor.findTutorByTutorID(user.userID);
-        res.status(200).json({ token, user, tutor });
-      } else {
-        res.status(200).json({ token, user });
+        const tutor = await Tutor.findTutorByTutorUserID(user.userID);
+        user = { ...user, ...tutor };
       }
+
+      const token = User.generateAuthToken(user);
+      res.status(200).json({ token, user });
     } catch (error) {
       console.error("Error logging in user:", error);
       res.status(500).json({ message: "Server error" });
@@ -206,7 +202,7 @@ class authController {
 
   static fetchUserProfile = async (req, res) => {
     try {
-      const user = await User.findByEmail(req.user.email);
+      const user = req.body.user;
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }

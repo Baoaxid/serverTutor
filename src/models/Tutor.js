@@ -113,7 +113,7 @@ class Tutor {
       .request()
       .input("userID", sql.Int, userID)
       .query(`SELECT * FROM Tutors WHERE userID = @userID`);
-    return result.recordset;
+    return result.recordset[0];
   }
 
   static async createClass(classroom) {
@@ -132,9 +132,10 @@ class Tutor {
       .input("price", sql.Float, classroom.price) // Ensure this matches the data type of 'price' column
       .input("tutorID", sql.VarChar, classroom.tutorID)
       .input("className", sql.VarChar, classroom.className)
+      .input("thumbnail", sql.VarChar, classroom.thumbnail)
       .query(
-        `INSERT INTO Classes (classID, subjectID, studentID, PaymentID, length, classesPerWeek, type, description, price, tutorID, className)
-     VALUES (@classID, @subjectID, @studentID, @PaymentID, @length, @ClassPerWeek, @type, @description, @price, @tutorID, @className)`
+        `INSERT INTO Classes (classID, subjectID, studentID, PaymentID, length, classesPerWeek, type, description, price, tutorID, className, thumbnail)
+     VALUES (@classID, @subjectID, @studentID, @PaymentID, @length, @ClassPerWeek, @type, @description, @price, @tutorID, @className, @thumbnail)`
       );
     return await this.findClassroom(id);
   }
@@ -168,7 +169,8 @@ class Tutor {
       .input("description", sql.VarChar, classroom.description)
       .input("price", sql.Float, classroom.price)
       .input("tutorID", sql.VarChar, classroom.tutorID)
-      .input("className", sql.VarChar, classroom.className).query(`
+      .input("className", sql.VarChar, classroom.className)
+      .input("thumbnail", sql.VarChar, classroom.thumbnail).query(`
             UPDATE Classes
             SET subjectID = @subjectID,
                 studentID = @studentID,
@@ -179,14 +181,12 @@ class Tutor {
                 description = @description,
                 price = @price,
                 tutorID = @tutorID,
-                className = @className
+                className = @className,
+                thumbnail = @thumbnail
+            OUTPUT inserted.*
             WHERE classID = @classID;
         `);
-    if (result.rowsAffected[0] > 0) {
-      return await this.findClassroom(classID);
-    } else {
-      return null;
-    }
+    return result.recordset[0];
   }
 
   static async deleteClass(classId) {

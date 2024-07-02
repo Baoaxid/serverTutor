@@ -227,11 +227,9 @@ class User {
   }
 
   static generateAuthToken(user) {
-    return jwt.sign(
-      { id: user.userID, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    return jwt.sign({ user }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
   }
 
   static async comparePassword(candidatePassword, hashedPassword) {
