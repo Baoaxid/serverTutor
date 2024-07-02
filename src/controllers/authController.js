@@ -180,6 +180,7 @@ class authController {
       if (!isMatch) {
         return res.status(400).json({ message: "Wrong Password" });
       }
+      console.log(user);
 
       if (!user.active) {
         return res.status(403).json({

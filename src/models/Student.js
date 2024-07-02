@@ -15,14 +15,13 @@ class Student {
   }
 
   static async createStudentID() {
-    await connectDB();
-    const result =
-      await sql.query`SELECT studentID FROM Students ORDER BY studentID DESC`;
+    const connection = await connectDB();
+    const result = await connection.request().query(`SELECT * FROM Students`);
     if (!result.recordset[0]) {
       let id = "S1";
       return id;
     } else {
-      let id = result.recordset[result.recordset.length - 1].classID;
+      let id = result.recordset[result.recordset.length - 1].studentID;
       const alphabet = id.match(/[A-Za-z]+/)[0];
       const number = parseInt(id.match(/\d+/)[0]) + 1;
       id = alphabet + number;
