@@ -1,3 +1,5 @@
+const Student = require("../models/Student");
+const Tutor = require("../models/Tutor");
 const User = require("../models/User");
 
 class userController {
@@ -31,11 +33,47 @@ class userController {
           message: "Missing user id",
         });
       }
+      const realUser = await User.findUserByID(userID);
+
       const user = req.body;
       if (!user) {
         return res.status(404).json({
           message: "Cannot found user",
         });
+      }
+      let updated;
+      if (realUser.role == "Student") {
+        let student = await Student.findStudentByUserID(userID);
+        if (!student) {
+          return res.status(404).json({
+            message: "Student not found",
+          });
+        }
+        student.grade = user.grade;
+        student.school = user.school;
+        updated = await Student.updateStudent(userID, student);
+        if (!updated) {
+          return res.status(500).json({
+            message: "Student update fail",
+          });
+        }
+      } else if (realUser.role == "Tutor") {
+        let tutor = await Tutor.findTutorByTutorUserID(userID);
+        if (!tutor) {
+          return res.status(404).json({
+            message: "Tutor not found",
+          });
+        }
+        tutor.degrees = user.degrees;
+        tutor.identityCard = user.identityCard;
+        tutor.workplace = user.workplace;
+        tutor.description = user.description;
+        updated = await Tutor.updateTutor(userID, tutor);
+        if (!updated) {
+          return res.status(500).json({
+            message: "Tutor update fail",
+          });
+        }
       }
 
       const data = await User.updateUser(user, userID);
@@ -47,7 +85,8 @@ class userController {
 
       return res.status(200).json({
         message: "User's detail updated",
-        data,
+        user: data,
+        updated,
       });
     } catch (error) {
       console.log(error);

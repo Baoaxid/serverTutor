@@ -74,6 +74,26 @@ class Tutor {
     }
   }
 
+  static async updateTutor(userID, tutorData) {
+    try {
+      await connectDB(); // Ensure database connection
+      await sql.query`
+        UPDATE Tutors
+        SET degrees = ${tutorData.degrees},
+            identityCard = ${tutorData.identityCard},
+            workplace = ${tutorData.workplace},
+            description = ${tutorData.description}
+        WHERE userID = ${userID};
+      `;
+      return new Tutor({
+        ...tutorData,
+      });
+    } catch (error) {
+      console.error("Error updating tutor:", error);
+      throw error;
+    }
+  }
+
   static async getAllTutor() {
     const connection = await connectDB();
     const result = await connection.request().query(`SELECT * FROM Tutors`);

@@ -149,14 +149,11 @@ class User {
         dateOfBirth = @dateOfBirth,
         phone = @phone,
         address = @address
+    OUTPUT inserted.*
     WHERE userID = @userID;
 `);
 
-    if (result.rowsAffected[0] > 0) {
-      return await this.findByEmail(user.email);
-    } else {
-      return null;
-    }
+    return result.recordset[0];
   }
 
   static async banUser(userID) {

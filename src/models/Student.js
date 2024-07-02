@@ -46,6 +46,22 @@ class Student {
     }
   }
 
+  static async updateStudent(userID, studentData) {
+    try {
+      await connectDB(); // Ensure database connection
+      const result = await sql.query`
+        UPDATE Students
+        SET grade = ${studentData.grade}, school = ${studentData.school}
+        OUTPUT inserted.*
+        WHERE userID = ${userID};
+      `;
+      return result.recordset[0];
+    } catch (error) {
+      console.error("Error updating student:", error);
+      throw error;
+    }
+  }
+
   static async getAllStudent() {
     const connection = await connectDB();
     const result = await connection.request().query(`SELECT * FROM Students`);
