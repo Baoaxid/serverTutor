@@ -29,9 +29,10 @@ class tutorController {
   static createClasses = async (req, res) => {
     try {
       const classroom = req.body;
+
       const paymentList = await Payment.getAllPayment();
       const isPaymentValid = paymentList.some(
-        (payment) => payment.paymentID === classroom.PaymentID
+        (payment) => payment.paymentID == classroom.PaymentID
       );
 
       if (!isPaymentValid) {
@@ -40,6 +41,7 @@ class tutorController {
         });
       }
 
+      console.log(classroom);
       if (
         !classroom.className ||
         !classroom.subject ||
