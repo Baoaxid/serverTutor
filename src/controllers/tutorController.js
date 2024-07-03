@@ -4,6 +4,34 @@ const Student = require("../models/Student");
 const Classroom = require("../models/Class");
 
 class tutorController {
+  static getTutor = async (req, res) => {
+    try {
+      const id = req.params.id;
+      let data = await Tutor.getTutor(id);
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot find tutor in database",
+        });
+      }
+      const classes = await Student.findClassByTutorName(data.fullName);
+      const uniqueSubjects = [
+        ...new Set(classes.map((cls) => cls.subject)),
+      ].join(", ");
+
+      data.subjects = uniqueSubjects;
+      res.status(200).json({
+        message: "Get tutor success",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error in get tutor in Server",
+        error,
+      });
+    }
+  };
+
   static getAllTutor = async (req, res) => {
     try {
       const data = await Tutor.getAllTutor();
