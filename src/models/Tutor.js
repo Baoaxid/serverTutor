@@ -94,6 +94,17 @@ class Tutor {
     }
   }
 
+  static async getTutor(userID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("userID", sql.Int, userID)
+      .query(
+        `SELECT u.userID, u.fullName, t.description, t.degrees, t.rating FROM Users u JOIN Tutors t ON u.userID = t.userID WHERE u.userID = @userID`
+      );
+    return result.recordset[0];
+  }
+
   static async getAllTutor() {
     const connection = await connectDB();
     const result = await connection.request().query(`SELECT * FROM Tutors`);
@@ -231,7 +242,10 @@ class Tutor {
       .request()
       .input("search", sql.VarChar, "%" + search + "%")
       .query(
-        `SELECT * FROM Tutors WHERE userID in (SELECT userID FROM Users WHERE fullName like @search)`
+        `SELECT Tutors.*, Users.fullName
+FROM Tutors
+JOIN Users ON Tutors.userID = Users.userID
+WHERE Users.fullName LIKE @search;`
       );
     return result.recordset;
   }

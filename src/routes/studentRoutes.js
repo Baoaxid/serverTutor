@@ -8,6 +8,11 @@ router.get(
   "/searchClassByTutorName/:search",
   studentController.findClassByTutorNameController
 );
+router.get(
+  "/searchTutorByTutorName/:search",
+  studentController.findTutorByTutorNameController
+);
+router.get("/checkEnroll/:id", studentController.checkEnrollStatus);
 router.post("/enrollClass/:id", studentController.enrollClass);
 router.post("/unEnrollClass/:id", studentController.unEnrollClass);
 router.post("/feedback/:classID", studentController.feedbackClass);
