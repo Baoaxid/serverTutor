@@ -66,6 +66,30 @@ class studentController {
     }
   };
 
+  static checkEnrollStatus = async (req, res) => {
+    try {
+      const classID = req.params.id;
+      const classroom = await Classroom.getClassroom(classID);
+      if (classroom.studentID) {
+        return res.status(200).json({
+          message: "The class already have a student",
+          studentID: classroom.studentID,
+          status: true,
+        });
+      } else {
+        return res.status(200).json({
+          message: "The class is not have student",
+          status: false,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Cannot check enroll status",
+      });
+    }
+  };
+
   static findClassByTutorNameController = async (req, res) => {
     try {
       const search = req.params.search;
@@ -126,7 +150,7 @@ class studentController {
       const classroom = await Student.findClassByID(classID);
       if (classroom.studentID) {
         return res.status(409).json({
-          message: "Cannot enroll because there still a student in the class",
+          message: "Cannot enroll because there's still a student in the class",
         });
       }
       if (!classroom.isActive) {
