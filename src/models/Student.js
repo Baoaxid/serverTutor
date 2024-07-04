@@ -116,7 +116,7 @@ class Student {
     const result = await connection
       .request()
       .input("className", sql.VarChar, "%" + name + "%")
-      .query("SELECT * FROM Class WHERE className like @className");
+      .query("SELECT * FROM Classes WHERE className like @className");
     return result.recordset;
   }
 

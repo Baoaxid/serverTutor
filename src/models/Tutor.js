@@ -182,7 +182,7 @@ class Tutor {
       return id;
     } else {
       let id = result.recordset[0].classID;
-      console.log(id);
+
       const alphabet = id.match(/[A-Za-z]+/)[0];
       const number = parseInt(id.match(/\d+/)[0]) + 1;
       id = alphabet + number;
@@ -205,7 +205,6 @@ class Tutor {
       .input("price", sql.Float, classroom.price) // Ensure this matches the data type of 'price' column
       .input("tutorID", sql.VarChar, classroom.tutorID)
       .input("className", sql.VarChar, classroom.className)
-      // .input("isActive", sql.Int, classroom.isActive)
       .input("videoLink", sql.VarChar, classroom.videoLink).query(`
             UPDATE Classes
             SET subject = @subject,
@@ -218,8 +217,7 @@ class Tutor {
                 price = @price,
                 tutorID = @tutorID,
                 className = @className,
-                videoLink = @videoLink,
-                isActive = @isActive
+                videoLink = @videoLink
             OUTPUT inserted.*
             WHERE classID = @classID;
         `);

@@ -35,8 +35,8 @@ class userController {
       }
       const realUser = await User.findUserByID(userID);
 
-      const user = req.body;
-      if (!user) {
+      const { updatedUserData } = req.body;
+      if (!updatedUserData) {
         return res.status(404).json({
           message: "Cannot found user",
         });
@@ -50,8 +50,8 @@ class userController {
             message: "Student not found",
           });
         }
-        student.grade = user.grade;
-        student.school = user.school;
+        student.grade = updatedUserData.grade;
+        student.school = updatedUserData.school;
         updated = await Student.updateStudent(userID, student);
         if (!updated) {
           return res.status(500).json({
@@ -65,10 +65,10 @@ class userController {
             message: "Tutor not found",
           });
         }
-        tutor.degrees = user.degrees;
-        tutor.identityCard = user.identityCard;
-        tutor.workplace = user.workplace;
-        tutor.description = user.description;
+        tutor.degrees = updatedUserData.degrees;
+        tutor.identityCard = updatedUserData.identityCard;
+        tutor.workplace = updatedUserData.workplace;
+        tutor.description = updatedUserData.description;
         updated = await Tutor.updateTutor(userID, tutor);
         if (!updated) {
           return res.status(500).json({
@@ -77,7 +77,7 @@ class userController {
         }
       }
 
-      const data = await User.updateUser(user, userID);
+      const data = await User.updateUser(updatedUserData, userID);
       if (!data) {
         return res.status(500).json({
           message: "Error in update user",
