@@ -69,7 +69,6 @@ class tutorController {
         });
       }
 
-      console.log(classroom);
       if (
         !classroom.className ||
         !classroom.subject ||

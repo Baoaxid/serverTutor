@@ -71,30 +71,10 @@ class authController {
       address,
       workplace,
       description,
+      avatar, // URL as a string
+      identityCard, // URL as a string
+      degrees, // URL as a string
     } = req.body;
-
-    const { avatar, identityCard, degrees } = req.body;
-
-    // if (!req.files || !req.files.avatar || !req.files.avatar.length) {
-    //   return res.status(400).json({ message: "Avatar is required" });
-    // }
-
-    // if (!req.files || !req.files.degreeFile || !req.files.degreeFile.length) {
-    //   return res.status(400).json({ message: "Degree File is required" });
-    // }
-
-    // if (
-    //   !req.files ||
-    //   !req.files.credentialFile ||
-    //   !req.files.credentialFile.length
-    // ) {
-    //   return res.status(400).json({ message: "credentialFile is required" });
-    // }
-
-    // const avatar = req.files.avatar[0].buffer;
-
-    // const identityCard = req.files.credentialFile[0].buffer;
-    // const degrees = req.files.degreeFile[0].buffer;
 
     try {
       // Check if user already exists
@@ -146,25 +126,6 @@ class authController {
       res.status(500).json({ message: "Server error" });
     }
   };
-
-  // static registerUser = async (req, res) => {
-  //   const { email } = req.body;
-
-  //   try {
-  //     let user = await User.findByEmail(email);
-  //     if (user) {
-  //       return res.status(400).json({ message: "User already exists" });
-  //     }
-
-  //     user = await User.create(req.body);
-  //     const token = User.generateAuthToken(user);
-
-  //     res.status(201).json({ token, user });
-  //   } catch (error) {
-  //     console.error("Error registering user:", error);
-  //     res.status(500).json({ message: "Server error" });
-  //   }
-  // };
 
   static loginUser = async (req, res) => {
     const { email, password } = req.body;
