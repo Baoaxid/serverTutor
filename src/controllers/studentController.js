@@ -227,6 +227,11 @@ class studentController {
     try {
       const classID = req.params.classID;
       const { studentID, message, rating } = req.body;
+      let { date } = req.body;
+
+      if (!date) {
+        date = new Date(now());
+      }
 
       const classroom = await Student.findClassByID(classID);
       if (classroom.studentID != studentID) {
@@ -236,7 +241,7 @@ class studentController {
         });
       }
 
-      let data = await Student.sendFeedback(classroom, message, rating);
+      let data = await Student.sendFeedback(classroom, message, rating, date);
       if (!data) {
         return res.status(404).json({
           message: "Cannot send feedback!",

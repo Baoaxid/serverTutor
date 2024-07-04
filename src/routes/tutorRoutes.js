@@ -11,6 +11,7 @@ router.put("/activeClasses/:id", tutorController.activeClasses);
 router.post("/findClasses/:search", classController.findClassroomByTutorID);
 router.get("/viewStudent/:classID", classController.viewStudentInClass);
 router.get("/viewRequest/:tutorID", tutorController.getRequest);
+router.get("/viewFeedback/:classID", classController.getFeedbackByClass);
 router.delete("/confirmRequest", tutorController.confirmRequest);
 
 module.exports = router;

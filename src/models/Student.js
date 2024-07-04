@@ -165,7 +165,7 @@ class Student {
     }
   }
 
-  static async sendFeedback(classroom, message, rating) {
+  static async sendFeedback(classroom, message, rating, date) {
     const connection = await connectDB();
     const updated = await connection
       .request()
@@ -173,11 +173,12 @@ class Student {
       .input("studentID", sql.VarChar, classroom.studentID)
       .input("classID", sql.VarChar, classroom.classID)
       .input("message", sql.VarChar, message)
+      .input("date", sql.VarChar, date)
       .input("rating", sql.Int, rating)
       .query(
-        "INSERT INTO Feedbacks (tutorID, studentID, classID, message, rating) VALUES (@tutorID, @studentID, @classID, @message, @rating)"
+        "INSERT INTO Feedbacks (tutorID, studentID, classID, message, rating, feedbackDate) OUTPUT inserted.* VALUES (@tutorID, @studentID, @classID, @message, @rating, @date)"
       );
-    if (updated.rowsAffected > 0) {
+    if (updated) {
       const avg = await connection
         .request()
         .input("tutorID", sql.VarChar, classroom.tutorID)
@@ -189,11 +190,7 @@ class Student {
         .input("tutorID", sql.VarChar, classroom.tutorID)
         .input("rating", sql.VarChar, avg.recordset[0].avg_rating + "")
         .query("UPDATE Tutors SET rating = @rating WHERE tutorID = @tutorID");
-      const result = await connection
-        .request()
-        .input("message", sql.VarChar, message)
-        .query("SELECT * FROM Feedbacks");
-      return result.recordset[result.recordset.length - 1];
+      return updated;
     }
   }
 }
