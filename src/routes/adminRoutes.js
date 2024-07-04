@@ -14,5 +14,6 @@ router.get("/modList", userController.getMod);
 router.get("/getRequest", adminController.getTutorRequest);
 router.get("/getUser", adminController.getAllUser);
 router.post("/handleTutor/:id", adminController.handleTutor);
+router.delete("/deleteClass/:id", adminController.deleteClass);
 
 module.exports = router;

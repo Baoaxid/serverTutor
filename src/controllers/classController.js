@@ -2,6 +2,42 @@ const Tutor = require("../models/Tutor");
 const Classroom = require("../models/Class");
 
 class classController {
+  static getFeedbackByClass = async (req, res) => {
+    try {
+      const classID = req.params.classID;
+      if (!classID) {
+        return res.status(404).json({
+          message: "Please provide class id",
+        });
+      }
+
+      const classroom = Classroom.getClassroom(classID);
+      if (!classroom) {
+        return res.status(404).json({
+          message: "Cannot find classroom",
+        });
+      }
+
+      const data = await Classroom.getFeedback(classID);
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot get feedback",
+        });
+      }
+
+      res.status(200).json({
+        message: "Feedback get success",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "error in get feedback by class",
+        error,
+      });
+    }
+  };
+
   static getAllClass = async (req, res) => {
     try {
       const data = await Classroom.getAllClass();

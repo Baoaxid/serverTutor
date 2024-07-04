@@ -1,3 +1,4 @@
+const Classroom = require("../models/Class");
 const User = require("../models/User");
 
 class adminController {
@@ -88,6 +89,35 @@ class adminController {
       console.log(error);
       res.status(500).json({
         message: "Error in confirm tutor in Server",
+        error,
+      });
+    }
+  };
+
+  static deleteClass = async (req, res) => {
+    try {
+      const classID = req.params.id;
+      if (!classID) {
+        return res.status(404).json({
+          message: "Missing class id",
+        });
+      }
+
+      const data = await Classroom.DeleteClass(classID);
+      if (!data) {
+        return res.status(500).json({
+          message: "Error in delete class",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Class Deleted",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error in delete class in Server",
         error,
       });
     }
