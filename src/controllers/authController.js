@@ -49,11 +49,17 @@ class authController {
         grade,
         school,
       });
+      if (!student) {
+        return res.status(500).json({
+          message: "Cannot create student",
+        });
+      }
+      user = { ...user, ...student };
 
       // Generate authentication token
       const token = User.generateAuthToken(user);
 
-      res.status(201).json({ token, user, student });
+      res.status(201).json({ token, user });
     } catch (error) {
       console.error("Error registering student:", error);
       res.status(500).json({ message: "Server error" });
@@ -112,6 +118,7 @@ class authController {
         });
       }
 
+      user = { ...user, ...tutor };
       // Generate authentication token
       const token = User.generateAuthToken(user);
 
@@ -119,7 +126,6 @@ class authController {
         message: "Tutor request sent, please wait for accept",
         token,
         user,
-        tutor,
       });
     } catch (error) {
       console.error("Error registering tutor:", error);

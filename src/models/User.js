@@ -42,6 +42,16 @@ class User {
     return result.recordset;
   }
 
+  static async getAllUser() {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .query(
+        `SELECT userID, userName, fullName, email, avatar, dateOfBirth, role, phone, address, active FROM Users`
+      );
+    return result.recordset;
+  }
+
   static async getUsers(userID) {
     const connection = await connectDB();
     const result = await connection

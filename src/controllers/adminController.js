@@ -1,6 +1,28 @@
 const User = require("../models/User");
 
 class adminController {
+  static getAllUser = async (req, res) => {
+    try {
+      const data = await User.getAllUser();
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot find user list",
+        });
+      }
+
+      return res.status(200).json({
+        message: "User list",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error in get user in Server",
+        error,
+      });
+    }
+  };
+
   static getTutorRequest = async (req, res) => {
     try {
       const data = await User.getRequest();
