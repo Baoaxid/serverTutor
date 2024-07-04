@@ -21,8 +21,6 @@ class authController {
     } = req.body;
 
     const { avatar } = req.body;
-    // console.log(req.files);
-    // const avatar = req.files.avatar ? req.files.avatar[0].buffer : null;
     try {
       // Check if user already exists
       let user = await User.findByEmail(email);
@@ -159,6 +157,7 @@ class authController {
         user = { ...user, ...tutor };
       }
 
+      console.log(user);
       const token = User.generateAuthToken(user);
       res.status(200).json({ token, user });
     } catch (error) {

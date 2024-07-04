@@ -109,12 +109,6 @@ class Tutor {
     return result.recordset[0];
   }
 
-  static async getAllTutor() {
-    const connection = await connectDB();
-    const result = await connection.request().query(`SELECT * FROM Tutors`);
-    return result.recordset;
-  }
-
   static async findClassroom(classroomID) {
     const connection = await connectDB();
     const result = await connection

@@ -32,28 +32,6 @@ class tutorController {
     }
   };
 
-  static getAllTutor = async (req, res) => {
-    try {
-      const data = await Tutor.getAllTutor();
-      if (!data) {
-        return res.status(404).json({
-          message: "Cannot find tutor list in database",
-        });
-      }
-
-      res.status(200).json({
-        message: "Get tutor list success",
-        data,
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        message: "Error in get tutor list in Server",
-        error,
-      });
-    }
-  };
-
   static createClasses = async (req, res) => {
     try {
       const classroom = req.body;

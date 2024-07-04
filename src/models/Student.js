@@ -43,6 +43,8 @@ class Student {
         VALUES (${userId}, ${studentID}, ${studentData.grade}, ${studentData.school});
       `;
       return new Student({
+        userID: userId,
+        studentID,
         ...studentData,
       });
     } catch (error) {
@@ -65,12 +67,6 @@ class Student {
       console.error("Error updating student:", error);
       throw error;
     }
-  }
-
-  static async getAllStudent() {
-    const connection = await connectDB();
-    const result = await connection.request().query(`SELECT * FROM Students`);
-    return result.recordset;
   }
 
   static async sendRequestToTutor(tutorID, studentID, message) {

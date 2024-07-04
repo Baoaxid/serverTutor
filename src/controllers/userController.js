@@ -41,6 +41,7 @@ class userController {
           message: "Cannot found user",
         });
       }
+
       let updated;
       if (realUser.role == "Student") {
         let student = await Student.findStudentByUserID(userID);

@@ -3,28 +3,6 @@ const Student = require("../models/Student");
 const Tutor = require("../models/Tutor");
 
 class studentController {
-  static getAllStudent = async (req, res) => {
-    try {
-      const data = await Student.getAllStudent();
-      if (!data) {
-        return res.status(404).json({
-          message: "Cannot find student list in database",
-        });
-      }
-
-      res.status(200).json({
-        message: "Get student list success",
-        data,
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        message: "Error in get student list in Server",
-        error,
-      });
-    }
-  };
-
   static requestClass = async (req, res) => {
     try {
       const tutorID = req.params.tutorID;
