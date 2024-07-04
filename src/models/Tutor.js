@@ -236,6 +236,18 @@ class Tutor {
     return result.recordset[0];
   }
 
+  static async activeClasses(classID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("classID", sql.VarChar, classID).query(`
+            UPDATE Classes SET isActive = 1
+            OUTPUT inserted.*
+            WHERE classID = @classID;
+        `);
+    return result.recordset[0];
+  }
+
   static async findTutorByName(search) {
     const connection = await connectDB();
     if (search == undefined) {

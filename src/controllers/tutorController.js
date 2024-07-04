@@ -141,6 +141,35 @@ class tutorController {
     }
   };
 
+  static activeClasses = async (req, res) => {
+    try {
+      const classID = req.params.id;
+      if (!classID) {
+        return res.status(404).json({
+          message: "Invalid class id",
+        });
+      }
+
+      const data = await Tutor.activeClasses(classID);
+      if (!data) {
+        return res.status(500).json({
+          message: "Error in active Classroom",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Classroom actived",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error in active class in Server",
+        error,
+      });
+    }
+  };
+
   static deleteClasses = async (req, res) => {
     try {
       const classID = req.params.id;
