@@ -16,16 +16,21 @@ class Student {
 
   static async createStudentID() {
     const connection = await connectDB();
-    const result = await connection.request().query(`SELECT * FROM Students`);
+    const result = await connection
+      .request()
+      .query(
+        `SELECT * FROM Students ORDER BY CAST(SUBSTRING(studentID, 2, LEN(studentID)) AS INT) DESC`
+      );
+
     if (!result.recordset[0]) {
-      let id = "S1";
-      return id;
+      return "S1"; // If there are no students, return the first ID
     } else {
-      let id = result.recordset[result.recordset.length - 1].studentID;
-      const alphabet = id.match(/[A-Za-z]+/)[0];
-      const number = parseInt(id.match(/\d+/)[0]) + 1;
-      id = alphabet + number;
-      return id;
+      // Assuming IDs are sorted and the last ID is the latest one
+      let lastID = result.recordset[0].studentID;
+      const alphabet = lastID.match(/[A-Za-z]+/)[0];
+      const number = parseInt(lastID.match(/\d+/)[0]) + 1;
+      let newID = alphabet + number;
+      return newID;
     }
   }
 

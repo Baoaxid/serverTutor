@@ -41,12 +41,16 @@ class Tutor {
 
   static async createTutorID() {
     const connection = await connectDB();
-    const result = await connection.request().query(`SELECT * FROM Tutors`);
+    const result = await connection
+      .request()
+      .query(
+        `SELECT * FROM Tutors ORDER BY CAST(SUBSTRING(tutorID, 2, LEN(tutorID)) AS INT) DESC`
+      );
     if (!result.recordset[0]) {
       let id = "T1";
       return id;
     } else {
-      let id = result.recordset[result.recordset.length - 1].tutorID;
+      let id = result.recordset[0].tutorID;
       const alphabet = id.match(/[A-Za-z]+/)[0];
       const number = parseInt(id.match(/\d+/)[0]) + 1;
       id = alphabet + number;
@@ -174,12 +178,17 @@ class Tutor {
 
   static async createClassID() {
     const connection = await connectDB();
-    const result = await connection.request().query(`SELECT * FROM Classes`);
+    const result = await connection
+      .request()
+      .query(
+        `SELECT * FROM Classes ORDER BY CAST(SUBSTRING(classID, 2, LEN(classID)) AS INT) DESC`
+      );
     if (!result.recordset[0]) {
       let id = "C1";
       return id;
     } else {
-      let id = result.recordset[result.recordset.length - 1].classID;
+      let id = result.recordset[0].classID;
+      console.log(id);
       const alphabet = id.match(/[A-Za-z]+/)[0];
       const number = parseInt(id.match(/\d+/)[0]) + 1;
       id = alphabet + number;
