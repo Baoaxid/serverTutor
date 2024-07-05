@@ -157,7 +157,6 @@ class authController {
         user = { ...user, ...tutor };
       }
 
-      console.log(user);
       const token = User.generateAuthToken(user);
       res.status(200).json({ token, user });
     } catch (error) {

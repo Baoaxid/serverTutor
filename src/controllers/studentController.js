@@ -114,6 +114,29 @@ class studentController {
     }
   };
 
+  static findClassByClassName = async (req, res) => {
+    try {
+      const search = req.params.search;
+      const data = await Student.findClassByName(search);
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot search for class",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Search successfully",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "error in search class by class name",
+        error,
+      });
+    }
+  };
+
   static getTutor = async (req, res) => {
     try {
       const search = req.params.search;
