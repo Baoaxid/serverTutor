@@ -50,8 +50,12 @@ class userController {
             message: "Student not found",
           });
         }
-        student.grade = updatedUserData.grade;
-        student.school = updatedUserData.school;
+        student.grade = updatedUserData.grade
+          ? updatedUserData.grade
+          : student.grade;
+        student.school = updatedUserData.school
+          ? updatedUserData.grade
+          : student.school;
         updated = await Student.updateStudent(userID, student);
         if (!updated) {
           return res.status(500).json({
@@ -65,10 +69,18 @@ class userController {
             message: "Tutor not found",
           });
         }
-        tutor.degrees = updatedUserData.degrees;
-        tutor.identityCard = updatedUserData.identityCard;
-        tutor.workplace = updatedUserData.workplace;
-        tutor.description = updatedUserData.description;
+        tutor.degrees = updatedUserData.degrees
+          ? updatedUserData.degrees
+          : tutor.degrees;
+        tutor.identityCard = updatedUserData.identityCard
+          ? updatedUserData.identityCard
+          : tutor.identityCard;
+        tutor.workplace = updatedUserData.workplace
+          ? updatedUserData.workplace
+          : tutor.workplace;
+        tutor.description = updatedUserData.description
+          ? updatedUserData.description
+          : tutor.description;
         updated = await Tutor.updateTutor(userID, tutor);
         if (!updated) {
           return res.status(500).json({

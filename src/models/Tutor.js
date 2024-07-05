@@ -89,9 +89,7 @@ class Tutor {
             description = ${tutorData.description}
         WHERE userID = ${userID};
       `;
-      return new Tutor({
-        ...tutorData,
-      });
+      return this.findTutorByTutorUserID(userID);
     } catch (error) {
       console.error("Error updating tutor:", error);
       throw error;
@@ -104,7 +102,7 @@ class Tutor {
       .request()
       .input("userID", sql.Int, userID)
       .query(
-        `SELECT u.userID, u.fullName, t.description, t.degrees, t.rating FROM Users u JOIN Tutors t ON u.userID = t.userID WHERE u.userID = @userID`
+        `SELECT u.userID, u.fullName, t.tutorID, t.description, t.degrees, t.rating FROM Users u JOIN Tutors t ON u.userID = t.userID WHERE u.userID = @userID`
       );
     return result.recordset[0];
   }
