@@ -24,12 +24,14 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "firebase": "^10.12.2",
+    "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mssql": "^11.0.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.10.1",
     "odbc": "^2.4.8",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
     "eslint": "^9.6.0",
