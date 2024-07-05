@@ -55,6 +55,34 @@ WHERE
     return result.recordset;
   }
 
+  static async getAllClassExisted() {
+    const connection = await connectDB();
+    const result = await connection.request().query(`SELECT 
+              c.classID,
+              c.className,
+              c.videoLink,
+              c.subject,
+              c.tutorID,
+              t.userID,
+              u.fullName AS tutorFullName,
+              c.studentID,
+              c.paymentID,
+              c.length,
+              c.available,
+              c.type,
+              c.description,
+              c.price,
+              t.rating,
+              c.isActive
+            FROM 
+              Classes c
+            JOIN 
+              Tutors t ON c.tutorID = t.tutorID
+            JOIN 
+              Users u ON t.userID = u.userID;`);
+    return result.recordset;
+  }
+
   static async getClassroom(classID) {
     const connection = await connectDB();
     const result = await connection

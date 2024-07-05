@@ -14,6 +14,7 @@ router.put(
   upload.fields([{ name: "avatar", maxCount: 1 }]),
   userController.updateUserForUser
 );
+
 router.get("/getClass/:id?", classController.getClass);
 router.get("/getAllClass", classController.getAllClass);
 router.get("/getTutor/:id", tutorController.getTutor);

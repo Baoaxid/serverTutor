@@ -10,6 +10,7 @@ router.put("/banUsers/:id", adminController.banUsers);
 router.put("/unbanUsers/:id", adminController.unbanUsers);
 router.get("/complainList", adminController.getComplainList);
 router.get("/classList", classController.getAllClass);
+router.get("/classListExisted", classController.getAllClassExisted);
 router.get("/modList", userController.getMod);
 router.get("/getRequest", adminController.getTutorRequest);
 router.get("/getUser", adminController.getAllUser);
