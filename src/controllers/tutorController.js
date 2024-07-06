@@ -1,4 +1,3 @@
-const axios = require("axios");
 const Tutor = require("../models/Tutor");
 const Payment = require("../models/Payment");
 const Student = require("../models/Student");
