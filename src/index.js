@@ -1,13 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const PayOS = require("@payos/node");
 
 const authRoutes = require("./routes/auth");
 const studentRoutes = require("./routes/studentRoutes");
 const tutorRoutes = require("./routes/tutorRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 const connectDB = require("./config/db");
 const { Server } = require("socket.io");
 const http = require("http");
@@ -34,6 +34,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/tutors", tutorRoutes);
+app.use("/api", paymentRoutes);
 
 const PORT = process.env.PORT || 5000;
 
@@ -47,7 +48,6 @@ io.on("connection", (socket) => {
   console.log("A user connected");
 
   socket.on("sendMessage", async (message) => {
-    const { senderID, receiverID, messageText } = message;
     try {
       io.emit("receiveMessage", message);
     } catch (error) {
