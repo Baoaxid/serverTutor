@@ -96,13 +96,15 @@ class Tutor {
 
   static async getTutor(userID) {
     const connection = await connectDB();
-    const result = await connection
+    const user = await connection
       .request()
       .input("userID", sql.Int, userID)
-      .query(
-        `SELECT u.userID, u.fullName, t.tutorID, t.description, t.degrees, t.rating FROM Users u JOIN Tutors t ON u.userID = t.userID WHERE u.userID = @userID`
-      );
-    return result.recordset[0];
+      .query(`SELECT * FROM Users WHERE userID = @userID`);
+    const tutor = await connection
+      .request()
+      .input("userID", sql.Int, userID)
+      .query(`SELECT * FROM Tutors WHERE userID = @userID`);
+    return { ...user.recordset[0], ...tutor.recordset[0] };
   }
 
   static async findClassroom(classroomID) {
