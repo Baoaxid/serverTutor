@@ -1,5 +1,6 @@
 const express = require("express");
 const studentController = require("../controllers/studentController");
+const classroomController = require("../controllers/classController");
 
 const router = express.Router();
 
@@ -15,6 +16,11 @@ router.get(
 router.get(
   "/searchClassByClassName/:search",
   studentController.findClassByClassName
+);
+
+router.get(
+  "/searchClassBySubject/:id",
+  classroomController.findClassroomBySubject
 );
 router.get("/checkEnroll/:id", studentController.checkEnrollStatus);
 router.post("/enrollClass/:id", studentController.enrollClass);

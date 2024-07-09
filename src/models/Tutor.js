@@ -258,7 +258,7 @@ class Tutor {
         `SELECT Tutors.*, Users.fullName
 FROM Tutors
 JOIN Users ON Tutors.userID = Users.userID
-WHERE Users.fullName LIKE @search;`
+WHERE Users.fullName LIKE @search AND Users.active = 1;`
       );
     return result.recordset;
   }

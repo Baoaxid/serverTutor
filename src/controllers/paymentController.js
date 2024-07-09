@@ -64,13 +64,23 @@ class PaymentController {
       res.status(500).json({ message: "Error get payment info", error });
     }
   };
-  static getAllTransaction = async (req, res) => {
+
+  static getPaymentInfo = async (req, res) => {
     try {
-      const payments = await Payment.getTransaction();
-      res.status(200).json(payments);
+      const data = await Payment.getPaymentInfo();
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot find payment info",
+        });
+      }
+
+      res.status(200).json({
+        message: "Get payment info success",
+        data,
+      });
     } catch (error) {
-      console.error("Error fetching payments:", error);
-      res.status(500).json({ message: "Internal Server Error" });
+      console.log(error);
+      res.status(500).json({ message: "Error get payment info", error });
     }
   };
 }

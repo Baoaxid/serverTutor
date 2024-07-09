@@ -5,6 +5,12 @@ const sql = require("mssql");
 dotenv.config();
 
 class Payment {
+  static async getPaymentInfo() {
+    const connection = await connectDB();
+    const result = await connection.request().query(`SELECT * FROM Payments`);
+    return result.recordset;
+  }
+
   static async getAllPayment() {
     const connection = await connectDB();
     const result = await connection.request().query(`SELECT * FROM Payment`);

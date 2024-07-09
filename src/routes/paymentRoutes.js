@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.post("/createPayment", PaymentController.createPayment);
 router.post("/checkPayment/:id", PaymentController.checkPayment);
-router.get("/getPayment", PaymentController.getAllTransaction);
+router.get("/getPaymentInfo", PaymentController.getPaymentInfo);
 
 module.exports = router;
