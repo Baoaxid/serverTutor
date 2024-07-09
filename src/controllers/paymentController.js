@@ -64,6 +64,15 @@ class PaymentController {
       res.status(500).json({ message: "Error get payment info", error });
     }
   };
+  static getAllTransaction = async (req, res) => {
+    try {
+      const payments = await Payment.getTransaction();
+      res.status(200).json(payments);
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
 }
 
 module.exports = PaymentController;
