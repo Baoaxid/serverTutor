@@ -133,7 +133,36 @@ class classController {
     } catch (error) {
       console.log(error);
       res.status(500).json({
-        message: "Error in delete class in Server",
+        message: "Error in find class in Server",
+        error,
+      });
+    }
+  };
+
+  static findClassroomBySubject = async (req, res) => {
+    try {
+      const subject = req.params.id;
+      if (!subject) {
+        return res.status(404).json({
+          message: "Please provide subject",
+        });
+      }
+
+      const classroom = await Classroom.findClassroomBySubject(subject);
+      if (!classroom) {
+        return res.status(500).json({
+          message: "Error in find classroom by subject",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Found classroom",
+        classroom,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error in found class in Server",
         error,
       });
     }

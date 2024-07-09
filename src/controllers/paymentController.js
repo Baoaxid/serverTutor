@@ -64,6 +64,25 @@ class PaymentController {
       res.status(500).json({ message: "Error get payment info", error });
     }
   };
+
+  static getPaymentInfo = async (req, res) => {
+    try {
+      const data = await Payment.getPaymentInfo();
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot find payment info",
+        });
+      }
+
+      res.status(200).json({
+        message: "Get payment info success",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Error get payment info", error });
+    }
+  };
 }
 
 module.exports = PaymentController;
