@@ -262,6 +262,27 @@ class User {
     const result = await connection.request().query(`SELECT * FROM Complains`);
     return result.recordset;
   }
+
+  static async updateUserPasswordByEmail(email, newPassword) {
+    const connection = await connectDB();
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const result = await connection
+      .request()
+      .input("email", sql.VarChar, email)
+      .input("password", sql.VarChar, hashedPassword)
+      .query(`
+        UPDATE Users
+        SET password = @password
+        WHERE email = @email;
+    `);
+    
+    if (result.rowsAffected[0] > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
 }
 
 module.exports = User;

@@ -11,6 +11,7 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const connectDB = require("./config/db");
 const { Server } = require("socket.io");
 const http = require("http");
+const sendEmail  = require("./OTP/EmailOtp");
 
 dotenv.config();
 
@@ -35,6 +36,15 @@ app.use("/api/users", userRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/tutors", tutorRoutes);
 app.use("/api", paymentRoutes);
+
+app.post("/send_recovery_email", (req, res) => {
+  const { recipient_email, OTP } = req.body; // Ensure these fields are sent in the request body
+  sendEmail({ recipient_email, OTP })
+    .then((response) => res.send(response.message))
+    .catch((error) => res.status(500).send(error.message));
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 
