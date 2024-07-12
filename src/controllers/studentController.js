@@ -44,6 +44,41 @@ class studentController {
     }
   };
 
+  static viewRequest = async (req, res) => {
+    try {
+      const studentID = req.params.studentID;
+      if (!studentID) {
+        return res.status(404).json({
+          message: "Please provide student id",
+        });
+      }
+      const student = Student.findStudentByID(studentID);
+      if (!student) {
+        return res.status(404).json({
+          message: "Cannot find Student",
+        });
+      }
+
+      const data = await Student.getRequest(studentID);
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot get request",
+        });
+      }
+
+      res.status(200).json({
+        message: "Request get success",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "error in get request by tutor",
+        error,
+      });
+    }
+  };
+
   static checkEnrollStatus = async (req, res) => {
     try {
       const classID = req.params.id;

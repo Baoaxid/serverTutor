@@ -82,6 +82,15 @@ class Student {
     return result.recordset[0];
   }
 
+  static async getRequest(studentID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("studentID", sql.VarChar, studentID)
+      .query(`SELECT * FROM Requests WHERE studentID = @studentID`);
+    return result.recordset;
+  }
+
   static async findStudentByID(studentID) {
     const connection = await connectDB();
     const result = await connection
