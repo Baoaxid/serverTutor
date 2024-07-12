@@ -47,7 +47,17 @@ class User {
     const result = await connection
       .request()
       .query(
-        `SELECT userID, userName, fullName, email, avatar, dateOfBirth, role, phone, address, active FROM Users`
+        `SELECT U.userID, U.userName, U.fullName, U.email, U.avatar, U.dateOfBirth, U.role, U.phone, U.address, U.active, S.studentID, T.tutorID FROM Users U LEFT JOIN Students S ON U.userID = S.userID AND U.role = 'Student' LEFT JOIN Tutors T ON U.userID = T.userID AND U.role = 'Tutor'`
+      );
+    return result.recordset;
+  }
+
+  static async getActiveUser() {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .query(
+        `SELECT userID, userName, fullName, email, avatar, dateOfBirth, role, phone, address, active FROM Users WHERE active = 1`
       );
     return result.recordset;
   }

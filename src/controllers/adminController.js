@@ -24,6 +24,29 @@ class adminController {
     }
   };
 
+  static getActiveUser = async (req, res) => {
+    try {
+      const data = await User.getActiveUser();
+      if (!data) {
+        return res.status(404).json({
+          message: "Cannot find active user list",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Active user list",
+        count: data.length,
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error in get active user in Server",
+        error,
+      });
+    }
+  };
+
   static getTutorRequest = async (req, res) => {
     try {
       const data = await User.getRequest();

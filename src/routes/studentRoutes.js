@@ -22,6 +22,7 @@ router.get(
   "/searchClassBySubject/:id",
   classroomController.findClassroomBySubject
 );
+// router.get("/getTutorEnrolled", studentController.getTutorEnroll);
 router.get("/checkEnroll/:id", studentController.checkEnrollStatus);
 router.post("/enrollClass/:id", studentController.enrollClass);
 router.post("/unEnrollClass/:id", studentController.unEnrollClass);

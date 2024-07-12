@@ -14,6 +14,7 @@ router.get("/classListExisted", classController.getAllClassExisted);
 router.get("/modList", userController.getMod);
 router.get("/getRequest", adminController.getTutorRequest);
 router.get("/getUser", adminController.getAllUser);
+router.get("/getActiveUser", adminController.getActiveUser);
 router.post("/handleTutor/:id", adminController.handleTutor);
 router.delete("/deleteClass/:id", adminController.deleteClass);
 
