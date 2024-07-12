@@ -50,11 +50,12 @@ class userController {
             message: "Student not found",
           });
         }
+        
         student.grade = updatedUserData.grade
           ? updatedUserData.grade
           : student.grade;
         student.school = updatedUserData.school
-          ? updatedUserData.grade
+          ? updatedUserData.school
           : student.school;
         updated = await Student.updateStudent(userID, student);
         if (!updated) {
@@ -137,6 +138,51 @@ class userController {
       });
     }
   };
+
+  static updateUserPassword = async (req, res) => {
+    try {
+      const { email, newPassword } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          message: "Email is required",
+        });
+      }
+
+      if (!newPassword) {
+        return res.status(400).json({
+          message: "New password is required",
+        });
+      }
+
+      const user = await User.findByEmail(email);
+
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+
+      const updated = await User.updateUserPasswordByEmail(email, newPassword);
+
+      if (!updated) {
+        return res.status(500).json({
+          message: "Error updating password",
+        });
+      }
+
+      res.status(200).json({
+        message: "Password updated successfully",
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        message: "Server error",
+        error,
+      });
+    }
+  };
+  
 }
 
 module.exports = userController;

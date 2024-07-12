@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const multer = require("multer");
 const authController = require("../controllers/authController");
-
+const userController = require("../controllers/userController");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -23,5 +23,6 @@ router.post(
 );
 router.post("/login", authController.loginUser);
 router.get("/profile", auth, authController.fetchUserProfile);
+router.put("/update-password", userController.updateUserPassword);
 
 module.exports = router;

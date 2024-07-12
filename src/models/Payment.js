@@ -40,6 +40,18 @@ class Payment {
     }
     return check.recordset[0];
   }
+  static async getTransaction() {
+    const connection = await connectDB();
+    const result = await connection.request().query(`SELECT 
+              tutorID,
+              orderCode,
+              amount,
+              status,
+              createdAt
+            FROM 
+              payments`);
+    return result.recordset;
+  }
 }
 
 module.exports = Payment;
