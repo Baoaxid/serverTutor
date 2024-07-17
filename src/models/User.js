@@ -272,6 +272,18 @@ class User {
     const result = await connection.request().query(`SELECT * FROM Complains`);
     return result.recordset;
   }
+  static async deleteComplain(complainID) {
+    const connection = await connectDB();
+    const result = await connection
+      .request()
+      .input("complainID", sql.Int, complainID)
+      .query(
+        `DELETE FROM [dbo].[Complains] 
+         OUTPUT deleted.[complainID], deleted.[uID], deleted.[message]
+         WHERE [complainID] = @complainID`
+      );
+    return result.recordset[0]; 
+  }
 
   static async updateUserPasswordByEmail(email, newPassword) {
     const connection = await connectDB();

@@ -18,4 +18,6 @@ router.get("/getActiveUser", adminController.getActiveUser);
 router.post("/handleTutor/:id", adminController.handleTutor);
 router.delete("/deleteClass/:id", adminController.deleteClass);
 
+
+router.delete('/deleteComplains/:id', adminController.deleteComplain);
 module.exports = router;

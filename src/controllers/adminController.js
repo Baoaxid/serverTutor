@@ -260,6 +260,29 @@ class adminController {
       });
     }
   };
+  static deleteComplain = async (req, res) => {
+    try {
+      const complainID = parseInt(req.params.id);
+      const deletedComplain = await User.deleteComplain(complainID);
+      if (deletedComplain) {
+        return res.status(200).json({
+          message: 'Complaint deleted successfully',
+          deletedComplain,
+        });
+      } else {
+        return res.status(404).json({
+          message: 'Complaint not found',
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting complaint:', error);
+      res.status(500).json({
+        message: 'Internal server error',
+        error,
+      });
+    }
+  };
+
 }
 
 module.exports = adminController;
