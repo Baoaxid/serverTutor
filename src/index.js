@@ -11,7 +11,7 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const connectDB = require("./config/db");
 const { Server } = require("socket.io");
 const http = require("http");
-const sendEmail  = require("./OTP/EmailOtp");
+const sendEmail  = require("./email/EmailOtp");
 
 dotenv.config();
 

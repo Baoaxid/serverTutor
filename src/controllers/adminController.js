@@ -1,6 +1,6 @@
 const Classroom = require("../models/Class");
 const User = require("../models/User");
-
+const { sendApprovalEmail, sendDenialEmail } = require("../email/EmailApproved");
 class adminController {
   static getAllUser = async (req, res) => {
     try {
@@ -91,14 +91,33 @@ class adminController {
         await User.updateRequestStatus(userID, status);
         if (!data) {
           return res.status(500).json({
-            message: "Error in confirm tutor",
+            message: "Error in confirming tutor",
           });
         }
+
+        // Send approval email
+        const user = await User.findUserByID(userID); // Assume you have a method to find user by ID
+        if (user && user.email) {
+          await sendApprovalEmail(user.email);
+        } else {
+          return res.status(500).json({
+            message: "Error in fetching user email",
+          });
+        }
+
         return res.status(200).json({
           message: "Tutor Confirmed",
         });
       } else if (status == "Deny") {
         await User.updateRequestStatus(userID, status);
+        const user = await User.findUserByID(userID); // Assume you have a method to find user by ID
+        if (user && user.email) {
+          await sendDenialEmail(user.email);
+        } else {
+          return res.status(500).json({
+            message: "Error in fetching user email",
+          });
+        }
         return res.status(200).json({
           message: "Tutor Denied",
         });
@@ -106,12 +125,11 @@ class adminController {
 
       return res.status(500).json({
         message: "Status not correct",
-        data,
       });
     } catch (error) {
       console.log(error);
       res.status(500).json({
-        message: "Error in confirm tutor in Server",
+        message: "Error in confirming tutor on server",
         error,
       });
     }
